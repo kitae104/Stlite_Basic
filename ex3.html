@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, shrink-to-fit=no"
+    />
+    <title>stlite app</title>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/@stlite/mountable@0.39.0/build/stlite.css"
+    />
+  </head>
+  <body>
+    <div id="root"></div>
+    <script src="https://cdn.jsdelivr.net/npm/@stlite/mountable@0.39.0/build/stlite.js"></script>
+    <script>
+      stlite.mount(
+        {
+          requirements: ["pandas", "joblib", "scikit-learn", "numpy", "matplotlib"],
+          entrypoint: "streamlit_app.py",
+          files: {
+            "streamlit_app.py": `
+import streamlit as st
+import pandas as pd
+import joblib
+
+# 데이터 시각화 라이브러리
+import matplotlib.pyplot as plt
+import matplotlib
+matplotlib.use("Agg") 
+
+# .pkl 파일 로드 함수
+def load_model(file_path):
+    model = joblib.load(file_path)
+    return model
+
+# Streamlit 앱 설정
+st.title("Streamlit 예제: .pkl 파일 로드")
+
+# .pkl 파일 업로드
+uploaded_file = st.file_uploader("모델 파일을 업로드하세요 (.pkl)", type="pkl")
+
+# 파일이 업로드된 경우 모델 로드 및 예측
+if uploaded_file is not None:
+    st.sidebar.info("파일이 성공적으로 업로드되었습니다.")
+
+    # 모델 로드
+    model = load_model(uploaded_file)
+
+    # 예제 데이터 생성 또는 사용자 입력을 받아 예측
+    st.subheader("예제 데이터 입력")
+
+    example_data = int(st.text_input("예제 데이터를 입력하세요:", "10"))
+    
+    # 다양한 streamlit 컴포넌트들
+    # 텍스트와 마크다운
+    text = st.text('여기에 텍스트 입력')
+    markdown = st.markdown('**볼드 텍스트**')
+
+    # 데이터 입력과 상호작용:
+    input = st.text_input('텍스트 입력')
+    slider = st.slider('슬라이더', min_value=0, max_value=100)
+    selectbox = st.selectbox('선택 박스', ['옵션 1', '옵션 2'])
+    checkbox = st.checkbox('체크 박스')
+    date_picker = st.date_input('날짜 선택')
+    time_picker = st.time_input('시간 선택')
+
+    # 데이터 표시:
+    csv_uploaded_file = st.file_uploader("모델 파일을 업로드하세요 (.csv)", type="csv")
+    df = pd.read_csv(csv_uploaded_file)
+    dataframe = st.dataframe(df)
+    table = st.table(df)
+    json = st.json({'key': 'value'})
+
+    image_uploaded_file = st.file_uploader("모델 파일을 업로드하세요 (.png)", type="png")
+    image = st.image(image_uploaded_file)
+
+    fig, ax = plt.subplots()
+    ax.scatter(df["sepal_length"], df["sepal_width"])    
+    plot = st.pyplot(fig)
+
+    #레이아웃과 컨테이너:
+    column = st.columns(2)
+    expander = st.expander('접을 수 있는 섹션')
+    container = st.container()
+
+    # 상태와 세션 관리:
+    session_state = st.session_state
+    button = st.button('버튼')
+
+
+    # 모델 예측
+    prediction = model.predict([[example_data]])
+
+    # 결과 출력
+    st.subheader("모델 예측 결과")
+    st.write(f"모델 예측 결과: {prediction}")
+
+`,
+
+          },
+        },
+
+        document.getElementById("root")
+      );
+    </script>
+  </body>
+</html>
