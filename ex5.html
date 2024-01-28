@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, shrink-to-fit=no"
+    />
+    <title>stlite app</title>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/@stlite/mountable@0.45.0/build/stlite.css"
+    />
+  </head>
+  <body>
+    <div id="root"></div>
+    <script src="https://cdn.jsdelivr.net/npm/@stlite/mountable@0.45.0/build/stlite.js"></script>
+    <script>
+      stlite.mount(
+        {
+          requirements: ["pandas", "plotly", "bokeh", "graphviz", "requests", "matplotlib", "numpy", "scipy", "altair", "pydeck", "vega_datasets", "streamlit"],
+          entrypoint: "streamlit_app.py",
+          files: {
+            "streamlit_app.py": `
+import altair as alt
+import streamlit as st
+from vega_datasets import data
+
+
+@st.cache_data
+def get_chart(use_container_width: bool):
+  import altair as alt
+  from vega_datasets import data
+
+  source = data.cars()
+
+  chart = (
+    alt.Chart(source)
+    .mark_circle()
+    .encode(
+      x="Horsepower",
+      y="Miles_per_Gallon",
+      color="Origin",
+    )
+    .interactive()
+  )
+
+  tab1, tab2 = st.tabs(["Streamlit theme (default)", "Altair native theme"])
+
+  with tab1:
+    st.altair_chart(
+      chart, use_container_width=use_container_width, theme="streamlit"
+    )
+  with tab2:
+    st.altair_chart(chart, use_container_width=use_container_width, theme=None)
+
+
+try:
+  get_chart(use_container_width=True)
+except Exception as e:
+  st.exception(e)
+`,
+
+          },
+        },
+
+        document.getElementById("root")
+      );
+    </script>
+  </body>
+</html>
