@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, shrink-to-fit=no"
+    />
+    <title>stlite app</title>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/@stlite/mountable@0.45.0/build/stlite.css"
+    />
+  </head>
+  <body>
+    <div id="root"></div>
+    <script src="https://cdn.jsdelivr.net/npm/@stlite/mountable@0.45.0/build/stlite.js"></script>
+    <script>
+      stlite.mount(
+        {
+          requirements: ["pandas", "plotly", "seaborn", "bokeh", "graphviz", "requests", "matplotlib", "numpy", "scipy", "altair", "pydeck", "vega_datasets", "streamlit"],
+          entrypoint: "streamlit_app.py",
+          files: {
+            "streamlit_app.py": `
+import streamlit as st
+
+# 파일 업로드 
+uploaded_files = st.file_uploader("Choose a file", accept_multiple_files=True)
+
+for uploaded_file in uploaded_files:
+    st.write("filename:", uploaded_file.name)
+
+# 링크 버튼 
+st.link_button("Go to gallery", "https://streamlit.io/gallery")
+
+# 다중 선택
+options = st.multiselect(
+    "What are your favorite colors",
+    ["Green", "Yellow", "Red", "Blue"],
+    ["Yellow", "Red"],
+)
+
+st.write("You selected:", options)
+
+# 숫자 입력
+number = st.number_input("Insert a number")
+st.write("The current number is ", number)
+
+# 숫자 입력2 
+number = st.number_input("Insert a number", value=None, placeholder="Type a number...")
+st.write("The current number is ", number)
+
+# 라디오 버튼 
+genre = st.radio(
+    "What's your favorite movie genre",
+    [":rainbow[Comedy]", "***Drama***", "Documentary :movie_camera:"],
+    captions=["Laugh out loud.", "Get the popcorn.", "Never stop learning."],
+)
+
+if genre == ":rainbow[Comedy]":
+    st.write("You selected comedy.")
+else:
+    st.write("You didn't select comedy.")
+
+# Store the initial value of widgets in session state
+if "visibility" not in st.session_state:
+    st.session_state.visibility = "visible"
+    st.session_state.disabled = False
+    st.session_state.horizontal = False
+
+col1, col2 = st.columns(2)
+
+with col1:
+    st.checkbox("Disable radio widget", key="disabled")
+    st.checkbox("Orient radio options horizontally", key="horizontal")
+
+with col2:
+    st.radio(
+        "Set label visibility 👇",
+        ["visible", "hidden", "collapsed"],
+        key="visibility",
+        label_visibility=st.session_state.visibility,
+        disabled=st.session_state.disabled,
+        horizontal=st.session_state.horizontal,
+    )
+
+# 슬라이더
+color = st.select_slider(
+  "Select a color of the rainbow",
+  options=["red", "orange", "yellow", "green", "blue", "indigo", "violet"],
+)
+
+st.write("My favorite color is", color)
+
+# 슬라이더
+start_color, end_color = st.select_slider(
+  "Select a range of color wavelength",
+  options=["red", "orange", "yellow", "green", "blue", "indigo", "violet"],
+  value=("red", "blue"),
+)
+
+st.write("You selected wavelengths between", start_color, "and", end_color)
+  
+# 옵션 선택
+option = st.selectbox(
+    "How would you like to be contacted?", ("Email", "Home phone", "Mobile phone")
+)
+
+st.write("You selected:", option)
+
+def run_sentiment_analysis(x):
+    return "dramatic"
+
+
+# 텍스트 영역 입력
+txt = st.text_area(
+    "Text to analyze",
+    """
+    It was the best of times, it was the worst of times, it was the age of
+    wisdom, it was the age of foolishness, it was the epoch of belief, it was
+    the epoch of incredulity, it was the season of Light, it was the season of
+    Darkness, it was the spring of hope, it was the winter of despair, (...)
+    """,
+)
+st.write("Sentiment:", run_sentiment_analysis(txt))
+
+# 텍스트 입력
+title = st.text_input("Movie title", "Life of Brian")
+st.write("The current movie title is", title)
+
+# 토글 버튼
+on = st.toggle("Activate feature")
+
+if on:
+    st.write("Feature activated!")
+
+`,
+
+          },
+        },
+
+        document.getElementById("root")
+      );
+    </script>
+  </body>
+</html>
