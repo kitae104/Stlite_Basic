@@ -33,6 +33,7 @@ if "secret_number" not in st.session_state:
 
 def main():
     st.title("랜덤 수 맞추기 게임")
+  
     st.write("추측 수 : " + str(st.session_state.secret_number))
 
     guess = st.number_input("1에서 100 사이의 수를 추측하세요:", min_value=1, max_value=100, step=1)
